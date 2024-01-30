@@ -15,21 +15,25 @@ int item_selected = 0;
 int item_sel_previous;
 int item_sel_next;
 
+int current_screen = 0;
+
 const char* ssid = "";
 const char* password = "";
 
 const char* URL = "https://api.spaceflightnewsapi.net/v4/articles/";
 
-const int NUM_ITEMS = 3;
+const int NUM_ITEMS = 5;
 const int MAX_ITEMS_LENGTH = 20;
 
 char menu_itens[NUM_ITEMS][MAX_ITEMS_LENGTH] = {"Wi-fi", "Bluetooth",
-                                                "Smart Home"};
+                                                "Smart Home", "SD Card", "Battery"};
 
-const unsigned char* bitmap_icons[3] = {
+const unsigned char* bitmap_icons[5] = {
     wifi_icon,
     bluetooth_icon,
     smart_home_icon,
+    sdcard_icon,
+    battery_icon,
 };
 
 void setup() {
@@ -40,13 +44,6 @@ void setup() {
     M5Cardputer.Display.setTextColor(GREEN);
     M5Cardputer.Display.setTextSize(2.4);
 
-    WiFi.begin(ssid, password);
-    M5Cardputer.Display.print("Conectando ao WiFi");
-    while (WiFi.status() != WL_CONNECTED) {
-        M5Cardputer.Display.print(".");
-        delay(1000);
-    }
-    M5Cardputer.Display.clearDisplay();
 }
 
 void loop() {
@@ -101,6 +98,7 @@ void loop() {
         }
 
         if (M5Cardputer.Keyboard.isKeyPressed(KEY_ENTER)) {
+            current_screen = item_selected;
         }
     }
 
@@ -136,4 +134,18 @@ void loop() {
     // draw scrollbar handle
     M5Cardputer.Display.fillRect(226, 129 / NUM_ITEMS * item_selected, 8,
                                  129 / NUM_ITEMS, GREEN);
+
+    while(current_screen == 1) {
+        M5Cardputer.Display.clearDisplay();
+
+        WiFi.begin(ssid, password);
+        M5Cardputer.Display.print("Conectando ao WiFi");
+        while (WiFi.status() != WL_CONNECTED) {
+            M5Cardputer.Display.print(".");
+            delay(1000);
+        }
+        current_screen = 0;
+        M5Cardputer.Display.clearDisplay();
+        break;
+    }
 }
